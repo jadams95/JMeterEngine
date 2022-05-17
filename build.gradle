@@ -1,0 +1,54 @@
+plugins {
+    id 'java'
+}
+
+group 'org.jaddy.base'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+class JMeterRule implements ComponentMetadataRule {
+    void execute(ComponentMetadataContext context) {
+        context.details.allVariants {
+            withDependencies {
+                removeAll { it.group == "org.apache.jmeter" && it.name == "bom" }
+            }
+        }
+    }
+}
+
+
+dependencies {
+    testImplementation group: 'org.apache.jmeter', name: 'ApacheJMeter_core', version: '5.4.3'
+    testImplementation group: 'org.apache.jmeter', name: 'jorphan', version: '5.4.3'
+    testImplementation group: 'org.apache.jmeter', name: 'ApacheJMeter_http', version: '5.4.3'
+    testImplementation group: 'org.apache.jmeter', name: 'ApacheJMeter_components', version: '5.4.3'
+    testImplementation group: 'org.apache.jmeter', name: 'ApacheJMeter_functions', version: '5.4.3'
+    testImplementation group: 'org.apache.jmeter', name: 'ApacheJMeter_config', version: '5.4.3'
+    // https://mvnrepository.com/artifact/us.abstracta.jmeter/jmeter-java-dsl
+    testImplementation group: 'us.abstracta.jmeter', name: 'jmeter-java-dsl', version: '0.54'
+
+// https://mvnrepository.com/artifact/org.assertj/assertj-core
+    testImplementation 'org.assertj:assertj-core:3.22.0'
+
+    components {
+        withModule("org.apache.jmeter:ApacheJMeter_core", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_http", JMeterRule)
+        withModule("us.abstracta.jmeter:jmeter-java-dsl", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_functions", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_config", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_components", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_java", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter", JMeterRule)
+        withModule("org.apache.jmeter:jorphan", JMeterRule)
+    }
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
